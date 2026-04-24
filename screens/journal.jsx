@@ -219,22 +219,23 @@ function JournalSheet({ open, onClose, mode = 'note' }) {
             </div>
             {ocrBadge && (
               <div style={{
-                marginTop: 10, display: 'flex', alignItems: 'center', gap: 8,
+                marginTop: 10, display: 'flex', alignItems: 'center', gap: 10,
                 padding: '8px 12px', borderRadius: 10,
-                background: ocrBadge.tone === 'ok' ? 'var(--accent-dim)' : 'oklch(0.35 0.10 45 / 0.22)',
+                background: 'var(--bg-1)',
                 border: '0.5px solid ' + (ocrBadge.tone === 'ok' ? 'var(--accent)' : 'var(--alert)'),
               }}>
                 <span style={{
-                  fontSize: 13,
-                  color: ocrBadge.tone === 'ok' ? 'var(--accent)' : 'var(--alert)',
-                }}>{ocrBadge.tone === 'ok' ? '✓' : '!'}</span>
+                  display: 'inline-block', width: 6, height: 6, borderRadius: 3,
+                  background: ocrBadge.tone === 'ok' ? 'var(--accent)' : 'var(--alert)',
+                  flexShrink: 0,
+                }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 12, color: 'var(--text-0)', fontWeight: 500 }}>
                     {ocrBadge.text}
                   </div>
                   {ocrBadge.model && (
-                    <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 1 }}>
-                      via {ocrBadge.model}
+                    <div className="eyebrow" style={{ fontSize: 9, marginTop: 2 }}>
+                      {ocrBadge.model}
                     </div>
                   )}
                 </div>
@@ -316,15 +317,23 @@ function JournalSheet({ open, onClose, mode = 'note' }) {
                 color: photos.length === 0 ? 'var(--text-3)' : 'var(--text-0)',
                 border: '0.5px solid ' + (photos.length === 0 ? 'var(--line-soft)' : 'var(--accent)'),
                 borderRadius: 12, fontSize: 13, fontWeight: 500,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
               }}>
-              <span style={{ fontSize: 14 }}>{ocrState === 'loading' ? '⏳' : '🔮'}</span>
-              {ocrState === 'loading' ? 'erkenne Werte …' : 'Werte aus Foto erkennen'}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke={photos.length === 0 ? 'var(--text-3)' : 'var(--accent)'}
+                strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 8V5a1 1 0 0 1 1-1h3" />
+                <path d="M20 8V5a1 1 0 0 0-1-1h-3" />
+                <path d="M4 16v3a1 1 0 0 0 1 1h3" />
+                <path d="M20 16v3a1 1 0 0 1-1 1h-3" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              {ocrState === 'loading' ? 'erkennt …' : 'Werte aus Foto erkennen'}
             </button>
           )}
           <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 6, lineHeight: 1.4 }}>
-            Max 3 Fotos · werden auf 960 px skaliert und lokal im Browser gespeichert.
-            {mode === 'bp-photo' && ' Erkennung läuft über Cloudflare Workers AI (LLaVA).'}
+            Max 3 Fotos · auf 960 px skaliert und lokal im Browser gespeichert.
+            {mode === 'bp-photo' && ' Erkennung auf deinem eigenen Worker — keine Drittanbieter.'}
           </div>
         </div>
       </div>

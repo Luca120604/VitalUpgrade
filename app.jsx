@@ -8,7 +8,7 @@ function App() {
   const S = window.Storage;
 
   const defaults = /*EDITMODE-BEGIN*/{
-    "accentHue": 190,
+    "accentHue": 260,
     "density": "comfortable"
   }/*EDITMODE-END*/;
 
@@ -48,12 +48,12 @@ function App() {
     setCoachOpen(false);
   };
 
-  // accent hue
+  // accent hue — richer chroma (0.15) so hues read as punchy Swiss color rather than pastel AI-app tint
   useEffectApp(() => {
     const h = tweaks.accentHue;
-    document.documentElement.style.setProperty('--accent', `oklch(0.78 0.09 ${h})`);
-    document.documentElement.style.setProperty('--accent-ink', `oklch(0.22 0.04 ${h})`);
-    document.documentElement.style.setProperty('--accent-dim', `oklch(0.35 0.06 ${h} / 0.22)`);
+    document.documentElement.style.setProperty('--accent', `oklch(0.68 0.15 ${h})`);
+    document.documentElement.style.setProperty('--accent-ink', `oklch(0.22 0.06 ${h})`);
+    document.documentElement.style.setProperty('--accent-dim', `oklch(0.40 0.10 ${h} / 0.22)`);
   }, [tweaks.accentHue]);
 
   const openQuick = (type) => {
@@ -132,16 +132,16 @@ function App() {
               onChange={(v) => setTweaks({ accentHue: v })} />
             <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
               {[
-                { label: 'Teal', hue: 190 },
-                { label: 'Sage', hue: 155 },
-                { label: 'Sand', hue: 80 },
-                { label: 'Clay', hue: 40 },
-                { label: 'Blau', hue: 230 },
+                { label: 'Kobalt', hue: 260 },
+                { label: 'Teal',   hue: 190 },
+                { label: 'Sage',   hue: 155 },
+                { label: 'Sand',   hue: 80 },
+                { label: 'Clay',   hue: 40 },
               ].map(p => (
                 <button key={p.label} onClick={() => setTweaks({ accentHue: p.hue })} style={{
                   flex: 1, padding: '10px 6px', borderRadius: 10,
-                  background: `oklch(0.78 0.09 ${p.hue})`,
-                  color: `oklch(0.22 0.04 ${p.hue})`, border: 0,
+                  background: `oklch(0.68 0.15 ${p.hue})`,
+                  color: `oklch(0.22 0.06 ${p.hue})`, border: 0,
                   fontSize: 11, fontWeight: 600, cursor: 'pointer',
                 }}>{p.label}</button>
               ))}
