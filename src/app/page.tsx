@@ -13,6 +13,9 @@ const popoverVariants = {
   exit: { opacity: 0 },
 };
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+const PROTOTYPE_HREF = `${BASE_PATH}/prototype/VITAL.html`;
+
 const screens = [
   { id: '01', label: 'Home', desc: 'Score · Fokus · Heute eintragen' },
   { id: '02', label: 'Werte', desc: 'Labor · Körper · Verhalten' },
@@ -41,7 +44,7 @@ export default function Page() {
         <div className='mb-3 flex items-center justify-between'>
           <span className='eyebrow'>Screens im Prototyp</span>
           <a
-            href='/prototype/VITAL.html'
+            href={PROTOTYPE_HREF}
             className='text-xs'
             style={{ color: 'var(--accent)' }}
           >
@@ -163,7 +166,7 @@ function Header() {
         </div>
       </div>
       <a
-        href='/prototype/VITAL.html'
+        href={PROTOTYPE_HREF}
         className='tap rounded-full px-3 py-1.5 text-[12px] font-medium'
         style={{ background: 'var(--accent)', color: 'var(--accent-ink)' }}
       >
@@ -228,7 +231,7 @@ function Hero() {
           className='mono rounded px-1.5 py-0.5 text-[11px]'
           style={{ background: 'var(--bg-2)', color: 'var(--text-0)' }}
         >
-          /prototype/VITAL.html
+          {PROTOTYPE_HREF}
         </code>
         . Diese Next.js-App ist die Produktions-Hülle — beginnend mit dem
         gemeinsamen Design-System.
