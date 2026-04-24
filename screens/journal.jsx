@@ -3,6 +3,9 @@
 
 const { useState: useStateJ, useEffect: useEffectJ, useRef: useRefJ, useMemo: useMemoJ } = React;
 
+// Cloudflare Worker endpoint for blood-pressure OCR via LLaVA/Llama Vision.
+const OCR_ENDPOINT = 'https://vital-ocr.luca1206acc.workers.dev/';
+
 // Downscale + compress an image File to a JPEG data URL.
 // Max edge 960px, quality 0.75 → typisch 80–200 KB pro Foto.
 async function compressImage(file, maxEdge = 960, quality = 0.75) {
@@ -27,6 +30,48 @@ async function compressImage(file, maxEdge = 960, quality = 0.75) {
   return canvas.toDataURL('image/jpeg', quality);
 }
 
+function dataUrlToBlob(dataUrl) {
+  const m = dataUrl.match(/^data:(image\/\w+);base64,(.+)$/);
+  if (!m) return null;
+  const bin = atob(m[2]);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: m[1] });
+}
+
+function shortModelName(id) {
+  if (!id) return '';
+  if (id.includes('llava')) return 'LLaVA';
+  if (id.includes('llama-3.2') && id.includes('vision')) return 'Llama Vision';
+  return id.split('/').pop() || id;
+}
+
+function isPlausibleBp(sys, dia) {
+  return typeof sys === 'number' && typeof dia === 'number'
+    && sys >= 70 && sys <= 230
+    && dia >= 40 && dia <= 140
+    && sys > dia;
+}
+
+async function runOcr(photoDataUrl, timeoutMs = 20000) {
+  const blob = dataUrlToBlob(photoDataUrl);
+  if (!blob) throw new Error('bad image');
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(OCR_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': blob.type || 'image/jpeg' },
+      body: blob,
+      signal: ctrl.signal,
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } finally {
+    clearTimeout(t);
+  }
+}
+
 function JournalSheet({ open, onClose, mode = 'note' }) {
   // mode: 'note' | 'bp-photo'
   const { Sheet } = window;
@@ -37,10 +82,16 @@ function JournalSheet({ open, onClose, mode = 'note' }) {
   const [photos, setPhotos] = useStateJ([]); // data URLs
   const [busy, setBusy] = useStateJ(false);
   const [bp, setBp] = useStateJ({ sys: '', dia: '' });
+  const [ocrState, setOcrState] = useStateJ('idle'); // idle | loading | done | error
+  const [ocrBadge, setOcrBadge] = useStateJ(null);   // { text, tone, model } | null
+  const [ocrError, setOcrError] = useStateJ(null);
   const fileRef = useRefJ(null);
 
   useEffectJ(() => {
-    if (open) { setText(''); setPhotos([]); setBp({ sys: '', dia: '' }); }
+    if (open) {
+      setText(''); setPhotos([]); setBp({ sys: '', dia: '' });
+      setOcrState('idle'); setOcrBadge(null); setOcrError(null);
+    }
   }, [open]);
 
   const onFiles = async (list) => {
@@ -64,6 +115,41 @@ function JournalSheet({ open, onClose, mode = 'note' }) {
   };
 
   const removePhoto = (i) => setPhotos(p => p.filter((_, j) => j !== i));
+
+  const onRecognize = async () => {
+    if (photos.length === 0) return;
+    setOcrState('loading'); setOcrError(null); setOcrBadge(null);
+    try {
+      // take the most recent (last) photo — OCR quality doesn't improve with multiple
+      const photo = photos[photos.length - 1];
+      const { parsed, model } = await runOcr(photo);
+      if (!parsed || typeof parsed.sys !== 'number' || typeof parsed.dia !== 'number') {
+        setOcrState('error');
+        setOcrError('Keine Werte erkannt — bitte manuell eintragen.');
+        return;
+      }
+      setBp({ sys: String(parsed.sys), dia: String(parsed.dia) });
+      const plausible = isPlausibleBp(parsed.sys, parsed.dia);
+      const conf = typeof parsed.confidence === 'string'
+        && ['low','medium','high'].includes(parsed.confidence)
+        ? parsed.confidence : null;
+      const short = shortModelName(model);
+      if (!plausible) {
+        setOcrBadge({ text: 'Werte wirken ungewöhnlich — bitte prüfen', tone: 'warn', model: short });
+      } else if (conf === 'low') {
+        setOcrBadge({ text: 'niedrige Confidence — bitte prüfen', tone: 'warn', model: short });
+      } else {
+        setOcrBadge({ text: conf ? `erkannt · ${conf}` : 'erkannt', tone: 'ok', model: short });
+      }
+      setOcrState('done');
+    } catch (e) {
+      console.error('[journal] ocr failed', e);
+      setOcrState('error');
+      setOcrError(e.name === 'AbortError'
+        ? 'Zeitüberschreitung — nochmal versuchen.'
+        : 'Erkennung fehlgeschlagen. Werte bitte manuell eintragen.');
+    }
+  };
 
   const canSave = mode === 'bp-photo'
     ? (bp.sys && bp.dia && photos.length > 0)
@@ -131,6 +217,37 @@ function JournalSheet({ open, onClose, mode = 'note' }) {
             <div style={{ fontSize: 11, color: 'var(--text-3)', textAlign: 'center', marginTop: 6 }}>
               mmHg · systolisch / diastolisch
             </div>
+            {ocrBadge && (
+              <div style={{
+                marginTop: 10, display: 'flex', alignItems: 'center', gap: 8,
+                padding: '8px 12px', borderRadius: 10,
+                background: ocrBadge.tone === 'ok' ? 'var(--accent-dim)' : 'oklch(0.35 0.10 45 / 0.22)',
+                border: '0.5px solid ' + (ocrBadge.tone === 'ok' ? 'var(--accent)' : 'var(--alert)'),
+              }}>
+                <span style={{
+                  fontSize: 13,
+                  color: ocrBadge.tone === 'ok' ? 'var(--accent)' : 'var(--alert)',
+                }}>{ocrBadge.tone === 'ok' ? '✓' : '!'}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-0)', fontWeight: 500 }}>
+                    {ocrBadge.text}
+                  </div>
+                  {ocrBadge.model && (
+                    <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 1 }}>
+                      via {ocrBadge.model}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            {ocrError && (
+              <div style={{
+                marginTop: 10, padding: '8px 12px', borderRadius: 10,
+                background: 'oklch(0.35 0.10 45 / 0.18)',
+                border: '0.5px solid var(--alert)',
+                fontSize: 12, color: 'var(--alert)',
+              }}>{ocrError}</div>
+            )}
           </div>
         )}
 
@@ -187,8 +304,27 @@ function JournalSheet({ open, onClose, mode = 'note' }) {
             onChange={(e) => onFiles(e.target.files)}
             style={{ display: 'none' }}
           />
+          {mode === 'bp-photo' && (
+            <button
+              onClick={onRecognize}
+              disabled={photos.length === 0 || ocrState === 'loading'}
+              className="tap"
+              style={{
+                marginTop: 10, width: '100%', padding: '12px 14px',
+                background: photos.length === 0 || ocrState === 'loading'
+                  ? 'var(--bg-2)' : 'var(--bg-1)',
+                color: photos.length === 0 ? 'var(--text-3)' : 'var(--text-0)',
+                border: '0.5px solid ' + (photos.length === 0 ? 'var(--line-soft)' : 'var(--accent)'),
+                borderRadius: 12, fontSize: 13, fontWeight: 500,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}>
+              <span style={{ fontSize: 14 }}>{ocrState === 'loading' ? '⏳' : '🔮'}</span>
+              {ocrState === 'loading' ? 'erkenne Werte …' : 'Werte aus Foto erkennen'}
+            </button>
+          )}
           <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 6, lineHeight: 1.4 }}>
             Max 3 Fotos · werden auf 960 px skaliert und lokal im Browser gespeichert.
+            {mode === 'bp-photo' && ' Erkennung läuft über Cloudflare Workers AI (LLaVA).'}
           </div>
         </div>
       </div>
