@@ -1,0 +1,117 @@
+/* VITAL — global tokens and base */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg-0: oklch(0.16 0.004 240);
+  --bg-1: oklch(0.20 0.006 240);
+  --bg-2: oklch(0.235 0.006 240);
+  --bg-3: oklch(0.28 0.006 240);
+  --line: oklch(0.32 0.006 240 / 0.6);
+  --line-soft: oklch(0.32 0.006 240 / 0.35);
+
+  --text-0: oklch(0.98 0.003 240);
+  --text-1: oklch(0.80 0.006 240);
+  --text-2: oklch(0.60 0.006 240);
+  --text-3: oklch(0.45 0.006 240);
+
+  --accent: oklch(0.78 0.09 190);
+  --accent-ink: oklch(0.22 0.04 190);
+  --warn:   oklch(0.82 0.10 75);
+  --alert:  oklch(0.72 0.11 45);
+  --muted:  oklch(0.50 0.01 240);
+
+  --r-card: 20px;
+  --r-input: 14px;
+
+  --font-sans: 'Geist', -apple-system, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: #0a0a0c;
+  font-family: var(--font-sans);
+  color: var(--text-0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* mobile screen container */
+.screen {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-0);
+  color: var(--text-0);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  padding-bottom: 140px; /* space for tab bar + home indicator */
+}
+.screen::-webkit-scrollbar { display: none; }
+
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.mono { font-family: var(--font-mono); }
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.card {
+  background: var(--bg-1);
+  border-radius: var(--r-card);
+}
+
+.hairline { height: 0.5px; background: var(--line-soft); }
+
+button { font-family: inherit; color: inherit; cursor: pointer; }
+input, textarea { font-family: inherit; }
+
+/* tap feedback */
+.tap { transition: transform 120ms var(--ease), opacity 120ms var(--ease); -webkit-tap-highlight-color: transparent; }
+.tap:active { transform: scale(0.97); opacity: 0.85; }
+
+/* scoped no-scrollbar */
+.noscroll::-webkit-scrollbar { display: none; }
+.noscroll { scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* keyframes */
+@keyframes skeleton {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+.skel {
+  background: linear-gradient(90deg, var(--bg-2) 0%, var(--bg-3) 50%, var(--bg-2) 100%);
+  background-size: 400px 100%;
+  animation: skeleton 1.6s linear infinite;
+  border-radius: 8px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 420ms var(--ease) both; }
+
+/* subtle ambient pulse for core button */
+@keyframes corePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes ringDraw {
+  from { stroke-dasharray: 0 9999; }
+}

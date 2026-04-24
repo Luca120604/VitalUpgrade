@@ -6,17 +6,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        vital: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          ink: '#0b1020',
+        bg: {
+          0: 'var(--bg-0)',
+          1: 'var(--bg-1)',
+          2: 'var(--bg-2)',
+          3: 'var(--bg-3)',
         },
+        line: {
+          DEFAULT: 'var(--line)',
+          soft: 'var(--line-soft)',
+        },
+        ink: {
+          0: 'var(--text-0)',
+          1: 'var(--text-1)',
+          2: 'var(--text-2)',
+          3: 'var(--text-3)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
+          ink: 'var(--accent-ink)',
+          dim: 'var(--accent-dim)',
+        },
+        warn: 'var(--warn)',
+        alert: 'var(--alert)',
       },
       fontFamily: {
-        sans: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['Geist Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+      borderRadius: {
+        card: 'var(--r-card)',
+        input: 'var(--r-input)',
       },
     },
   },

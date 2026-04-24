@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { ArrowRight, Heart, Activity, Droplets, Moon, Plus } from 'lucide-react';
 import {
   MorphingPopover,
   MorphingPopoverContent,
@@ -14,115 +13,261 @@ const popoverVariants = {
   exit: { opacity: 0 },
 };
 
-const vitals = [
-  {
-    label: 'Resting HR',
-    value: '62',
-    unit: 'bpm',
-    icon: Heart,
-    trend: '-3 vs 7d',
-  },
-  {
-    label: 'Steps',
-    value: '8,412',
-    unit: 'today',
-    icon: Activity,
-    trend: '+12%',
-  },
-  {
-    label: 'Hydration',
-    value: '1.9',
-    unit: 'L',
-    icon: Droplets,
-    trend: 'on track',
-  },
-  {
-    label: 'Sleep',
-    value: '7h 24m',
-    unit: 'last night',
-    icon: Moon,
-    trend: '+28m',
-  },
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+const PROTOTYPE_HREF = `${BASE_PATH}/prototype/VITAL.html`;
+
+const screens = [
+  { id: '01', label: 'Home', desc: 'Score · Fokus · Heute eintragen' },
+  { id: '02', label: 'Werte', desc: 'Labor · Körper · Verhalten' },
+  { id: '03', label: 'Wissen', desc: 'Regeln · Quellen · Quiz' },
+  { id: '04', label: 'Einstellungen', desc: 'Profil · Export · Tweaks' },
+];
+
+const quickEntries = [
+  { key: 'water', label: 'Wasser', unit: 'L' },
+  { key: 'caffeine', label: 'Koffein', unit: 'mg' },
+  { key: 'sleep', label: 'Schlaf', unit: 'h' },
+  { key: 'sport', label: 'Sport', unit: 'min' },
 ];
 
 export default function Page() {
   return (
-    <main className='mx-auto flex min-h-screen max-w-md flex-col gap-8 px-5 pb-24 pt-10'>
-      <header className='flex items-center justify-between'>
-        <div className='flex items-center gap-2'>
-          <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-vital-600 text-white'>
-            <Heart className='h-5 w-5' fill='currentColor' />
-          </div>
-          <div>
-            <p className='text-xs uppercase tracking-widest text-zinc-500'>
-              VitalUpgrade
-            </p>
-            <p className='text-sm font-semibold'>Good morning, Luca</p>
-          </div>
-        </div>
-        <QuickAddPopover />
-      </header>
+    <main
+      className='mx-auto flex min-h-screen w-full max-w-md flex-col gap-7 px-5 pb-28 pt-12'
+      style={{ background: 'var(--bg-0)' }}
+    >
+      <Header />
 
-      <section className='rounded-3xl bg-gradient-to-br from-vital-600 to-emerald-700 p-6 text-white shadow-lg'>
-        <p className='text-sm/6 opacity-90'>Vitality score</p>
-        <div className='mt-1 flex items-end gap-2'>
-          <span className='text-5xl font-semibold tracking-tight'>82</span>
-          <span className='pb-2 text-sm opacity-80'>/ 100</span>
-        </div>
-        <p className='mt-3 text-sm/6 opacity-90'>
-          Better than 74% of your last 30 days. Nudge: a 10-minute walk now
-          keeps your streak alive.
-        </p>
-        <button className='mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-sm font-medium backdrop-blur transition hover:bg-white/25'>
-          See breakdown <ArrowRight className='h-4 w-4' />
-        </button>
-      </section>
+      <Hero />
 
       <section>
-        <h2 className='mb-3 text-sm font-semibold uppercase tracking-wider text-zinc-500'>
-          Today
-        </h2>
-        <div className='grid grid-cols-2 gap-3'>
-          {vitals.map((v) => (
+        <div className='mb-3 flex items-center justify-between'>
+          <span className='eyebrow'>Screens im Prototyp</span>
+          <a
+            href={PROTOTYPE_HREF}
+            className='text-xs'
+            style={{ color: 'var(--accent)' }}
+          >
+            Öffnen →
+          </a>
+        </div>
+        <div className='grid grid-cols-2 gap-2'>
+          {screens.map((s) => (
             <motion.div
-              key={v.label}
+              key={s.id}
               whileTap={{ scale: 0.97 }}
-              className='rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900'
+              className='tap rounded-2xl p-4'
+              style={{
+                background: 'var(--bg-1)',
+                border: '0.5px solid var(--line-soft)',
+              }}
             >
-              <div className='flex items-center justify-between'>
-                <v.icon className='h-4 w-4 text-vital-600' />
-                <span className='text-[10px] font-medium uppercase tracking-wider text-zinc-500'>
-                  {v.trend}
-                </span>
+              <span className='eyebrow num'>{s.id}</span>
+              <div className='mt-3 text-[15px] font-medium'>{s.label}</div>
+              <div
+                className='mt-1 text-[11px]'
+                style={{ color: 'var(--text-2)' }}
+              >
+                {s.desc}
               </div>
-              <p className='mt-3 text-2xl font-semibold tabular-nums'>
-                {v.value}
-              </p>
-              <p className='text-xs text-zinc-500'>
-                {v.unit} · {v.label}
-              </p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      <section className='rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900'>
-        <h2 className='text-sm font-semibold'>Next check-in</h2>
-        <p className='mt-1 text-sm text-zinc-500'>
-          Log your hydration at 15:00 to close today&apos;s loop.
-        </p>
-        <div className='mt-4 flex items-center justify-between'>
-          <span className='text-xs text-zinc-500'>in 2h 14m</span>
-          <button className='rounded-full bg-zinc-950 px-3 py-1.5 text-xs font-medium text-white dark:bg-white dark:text-zinc-950'>
-            Remind me
-          </button>
+      <section>
+        <div className='mb-3 flex items-center justify-between'>
+          <span className='eyebrow'>Heute eintragen</span>
+          <QuickAddPopover />
+        </div>
+        <div
+          className='rounded-2xl p-4'
+          style={{
+            background: 'var(--bg-1)',
+            border: '0.5px solid var(--line-soft)',
+          }}
+        >
+          <div className='grid grid-cols-4 gap-2'>
+            {quickEntries.map((q) => (
+              <div
+                key={q.key}
+                className='flex flex-col items-center gap-1 rounded-xl py-3'
+                style={{ background: 'var(--bg-2)' }}
+              >
+                <span className='num text-[15px] font-medium'>—</span>
+                <span
+                  className='text-[10px]'
+                  style={{ color: 'var(--text-2)' }}
+                >
+                  {q.label}
+                </span>
+              </div>
+            ))}
+          </div>
+          <p
+            className='mt-3 text-[11px] leading-relaxed'
+            style={{ color: 'var(--text-2)' }}
+          >
+            Prototyp-Daten werden im Browser (localStorage) gehalten. Im
+            Prototyp: Demo-Daten laden unter 04 Einstellungen.
+          </p>
         </div>
       </section>
 
-      <footer className='mt-auto text-center text-xs text-zinc-400'>
-        v0.1 · built with Claude Code
+      <section
+        className='rounded-2xl p-5'
+        style={{
+          background: 'var(--bg-1)',
+          border: '0.5px solid var(--line-soft)',
+        }}
+      >
+        <span className='eyebrow'>Design-System</span>
+        <h3 className='mt-2 text-[17px] font-semibold tracking-tight'>
+          Swiss-Grid · dunkel-first · eine warme Akzentfarbe
+        </h3>
+        <p
+          className='mt-2 text-[13px] leading-relaxed'
+          style={{ color: 'var(--text-1)' }}
+        >
+          Zahlen und Typografie tragen die Kommunikation. Kein Glow, kein Neon,
+          kein Purple-AI-Look. Grafik unterstützt das Verständnis, nicht die
+          Dekoration.
+        </p>
+        <div className='mt-4 flex gap-2'>
+          <Swatch label='bg-0' color='var(--bg-0)' />
+          <Swatch label='bg-1' color='var(--bg-1)' />
+          <Swatch label='bg-2' color='var(--bg-2)' />
+          <Swatch label='accent' color='var(--accent)' />
+          <Swatch label='warn' color='var(--warn)' />
+          <Swatch label='alert' color='var(--alert)' />
+        </div>
+      </section>
+
+      <footer
+        className='mt-auto pt-6 text-center text-[11px]'
+        style={{ color: 'var(--text-3)' }}
+      >
+        VITAL · Prototyp → Produktion · built with Claude Code
       </footer>
     </main>
+  );
+}
+
+function Header() {
+  return (
+    <header className='flex items-center justify-between'>
+      <div className='flex items-center gap-3'>
+        <VitalLogo />
+        <div>
+          <p className='eyebrow'>VITAL</p>
+          <p className='text-[13px]' style={{ color: 'var(--text-1)' }}>
+            Mobile-first Health Companion
+          </p>
+        </div>
+      </div>
+      <a
+        href={PROTOTYPE_HREF}
+        className='tap rounded-full px-3 py-1.5 text-[12px] font-medium'
+        style={{ background: 'var(--accent)', color: 'var(--accent-ink)' }}
+      >
+        Prototyp öffnen
+      </a>
+    </header>
+  );
+}
+
+function VitalLogo() {
+  return (
+    <svg viewBox='0 0 100 100' width={36} height={36} aria-hidden>
+      <rect width='100' height='100' rx='18' fill='var(--bg-1)' />
+      <circle
+        cx='50'
+        cy='50'
+        r='26'
+        fill='none'
+        stroke='var(--accent)'
+        strokeWidth='3'
+      />
+      <circle cx='50' cy='50' r='14' fill='var(--accent-dim)' />
+      <path
+        d='M24 50h8l4-9 6 18 4-12 4 6h16'
+        fill='none'
+        stroke='var(--accent)'
+        strokeWidth='2.2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+    </svg>
+  );
+}
+
+function Hero() {
+  return (
+    <section
+      className='relative overflow-hidden rounded-3xl p-6'
+      style={{
+        background: 'var(--bg-1)',
+        border: '0.5px solid var(--line-soft)',
+      }}
+    >
+      <div
+        className='absolute left-0 top-0 h-full w-[3px]'
+        style={{ background: 'var(--accent)' }}
+      />
+      <span className='eyebrow'>Im Blick</span>
+      <h1
+        className='mt-2 text-[28px] font-semibold leading-[1.1] tracking-tight'
+        style={{ textWrap: 'balance' as const }}
+      >
+        Guten Morgen,{' '}
+        <span style={{ color: 'var(--accent)' }}>du</span>.
+      </h1>
+      <p
+        className='mt-3 text-[13px] leading-relaxed'
+        style={{ color: 'var(--text-1)' }}
+      >
+        Der VITAL-Prototyp liegt unter{' '}
+        <code
+          className='mono rounded px-1.5 py-0.5 text-[11px]'
+          style={{ background: 'var(--bg-2)', color: 'var(--text-0)' }}
+        >
+          {PROTOTYPE_HREF}
+        </code>
+        . Diese Next.js-App ist die Produktions-Hülle — beginnend mit dem
+        gemeinsamen Design-System.
+      </p>
+      <div className='mt-4 flex items-center gap-3'>
+        <span className='num text-[40px] font-semibold leading-none tracking-tight'>
+          82
+        </span>
+        <div>
+          <div className='eyebrow'>Well.</div>
+          <div
+            className='text-[11px]'
+            style={{ color: 'var(--text-2)' }}
+          >
+            Demo-Score (Prototyp)
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Swatch({ label, color }: { label: string; color: string }) {
+  return (
+    <div className='flex flex-1 flex-col items-stretch gap-1'>
+      <div
+        className='h-10 rounded-lg'
+        style={{ background: color, border: '0.5px solid var(--line-soft)' }}
+      />
+      <span
+        className='eyebrow text-[9px]'
+        style={{ color: 'var(--text-2)' }}
+      >
+        {label}
+      </span>
+    </div>
   );
 }
 
@@ -132,40 +277,50 @@ function QuickAddPopover() {
       variants={popoverVariants}
       transition={{ type: 'spring', bounce: 0.15, duration: 0.45 }}
     >
-      <MorphingPopoverTrigger className='flex h-10 w-10 items-center justify-center rounded-full bg-zinc-950 text-white shadow-md dark:bg-white dark:text-zinc-950'>
-        <motion.span layout className='flex items-center justify-center'>
-          <Plus className='h-5 w-5' />
-        </motion.span>
+      <MorphingPopoverTrigger
+        className='tap rounded-full px-3 py-1.5 text-[12px] font-medium'
+        style={{ background: 'var(--accent)', color: 'var(--accent-ink)' }}
+      >
+        + Eintrag
       </MorphingPopoverTrigger>
-      <MorphingPopoverContent className='right-0 top-0 w-64 rounded-2xl bg-white p-4 dark:bg-zinc-900'>
+      <MorphingPopoverContent
+        className='right-0 top-8 w-64 rounded-2xl p-3'
+        style={{
+          background: 'var(--bg-1)',
+          border: '0.5px solid var(--line-soft)',
+          color: 'var(--text-0)',
+        }}
+      >
         <div className='flex items-center justify-between'>
-          <p className='text-sm font-semibold'>Log a vital</p>
-          <kbd className='rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-500 dark:bg-zinc-800'>
+          <p className='eyebrow'>Schnell-Eintrag</p>
+          <kbd
+            className='mono rounded px-1.5 py-0.5 text-[10px]'
+            style={{ background: 'var(--bg-2)', color: 'var(--text-2)' }}
+          >
             Esc
           </kbd>
         </div>
         <div className='mt-3 grid grid-cols-2 gap-2'>
-          <QuickAction icon={Heart} label='Heart rate' />
-          <QuickAction icon={Droplets} label='Water' />
-          <QuickAction icon={Activity} label='Workout' />
-          <QuickAction icon={Moon} label='Sleep' />
+          {quickEntries.map((q) => (
+            <button
+              key={q.key}
+              className='tap flex flex-col items-start gap-1 rounded-xl p-3 text-left'
+              style={{
+                background: 'var(--bg-2)',
+                color: 'var(--text-0)',
+              }}
+            >
+              <span className='text-[12px] font-medium'>{q.label}</span>
+              <span
+                className='text-[10px]'
+                style={{ color: 'var(--text-2)' }}
+              >
+                Einheit · {q.unit}
+              </span>
+            </button>
+          ))}
         </div>
       </MorphingPopoverContent>
     </MorphingPopover>
-  );
-}
-
-function QuickAction({
-  icon: Icon,
-  label,
-}: {
-  icon: typeof Heart;
-  label: string;
-}) {
-  return (
-    <button className='flex flex-col items-start gap-2 rounded-xl border border-zinc-200 p-3 text-left text-sm transition hover:border-vital-500 hover:bg-vital-50 dark:border-zinc-800 dark:hover:border-vital-500 dark:hover:bg-vital-600/10'>
-      <Icon className='h-4 w-4 text-vital-600' />
-      <span className='text-xs font-medium'>{label}</span>
-    </button>
   );
 }
