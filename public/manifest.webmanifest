@@ -1,0 +1,10 @@
+{
+  "name": "VitalUpgrade",
+  "short_name": "Vital",
+  "description": "Mobile-first Health Companion PWA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#16a34a",
+  "icons": []
+}
