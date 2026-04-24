@@ -2,7 +2,7 @@
 
 const { useState: useStateH, useEffect: useEffectH, useMemo: useMemoH } = React;
 
-function Home({ onOpenCore, onOpenQuickEntry, onOpenSymptom, goTab }) {
+function Home({ onOpenCore, onOpenQuickEntry, onOpenSymptom, onOpenJournal, onOpenBpPhoto, goTab }) {
   const Icon = window.Icon;
   const { HealthRing, HPRing, BlockyAvatar, Sparkline, SegmentedBar, StatusDot } = window.UI;
   const { FOCUS_ORDER, QUICK_ENTRIES } = window.VITAL_DATA;
@@ -139,6 +139,62 @@ function Home({ onOpenCore, onOpenQuickEntry, onOpenSymptom, goTab }) {
           </div>
         </div>
       )}
+
+      {/* Chat-style Journal CTA */}
+      <div style={{ padding: '22px 20px 4px' }}>
+        <button onClick={onOpenJournal} className="tap" style={{
+          width: '100%', padding: '16px 18px', background: 'var(--bg-1)',
+          border: '0.5px solid var(--accent)', borderRadius: 18,
+          display: 'flex', alignItems: 'center', gap: 14,
+          textAlign: 'left', color: 'var(--text-0)',
+        }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 20, background: 'var(--accent-dim)',
+            display: 'grid', placeItems: 'center', flexShrink: 0,
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="var(--accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-0)' }}>
+              Was ist dir aufgefallen?
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-2)', marginTop: 2 }}>
+              Freitext · Foto · Symptom — alles in einen Eintrag
+            </div>
+          </div>
+          <span style={{ fontSize: 20, color: 'var(--text-3)' }}>+</span>
+        </button>
+        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+          <button onClick={onOpenBpPhoto} className="tap" style={{
+            flex: 1, padding: '10px 12px', background: 'var(--bg-1)',
+            border: '0.5px solid var(--line-soft)', borderRadius: 10,
+            display: 'flex', alignItems: 'center', gap: 8,
+            color: 'var(--text-1)', fontSize: 12,
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="var(--accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            Blutdruck aus Foto
+          </button>
+          <button onClick={onOpenSymptom} className="tap" style={{
+            flex: 1, padding: '10px 12px', background: 'var(--bg-1)',
+            border: '0.5px solid var(--line-soft)', borderRadius: 10,
+            display: 'flex', alignItems: 'center', gap: 8,
+            color: 'var(--text-1)', fontSize: 12,
+          }}>
+            <Icon.Note size={14} color="var(--accent)" />
+            Symptom taggen
+          </button>
+        </div>
+      </div>
+
+      {/* Journal feed (letzte Einträge) */}
+      {window.JournalFeed && <window.JournalFeed limit={3} onOpen={onOpenJournal} />}
 
       {/* Quick entries grid */}
       <div style={{ padding: '22px 20px 4px' }}>
