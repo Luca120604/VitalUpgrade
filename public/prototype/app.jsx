@@ -31,6 +31,7 @@ function App() {
   const [labKey, setLabKey] = useStateApp(null);         // labKey or '__parse'
   const [quizOpen, setQuizOpen] = useStateApp(false);
   const [coachOpen, setCoachOpen] = useStateApp(false);
+  const [journalMode, setJournalMode] = useStateApp(null); // null | 'note' | 'bp-photo'
 
   // Show the FAB coach-mark once per user, the first time they reach the
   // main app after onboarding. A localStorage flag suppresses subsequent shows.
@@ -77,6 +78,8 @@ function App() {
       onOpenCore={() => setActionOpen(true)}
       onOpenQuickEntry={openQuick}
       onOpenSymptom={() => setSymptomOpen(true)}
+      onOpenJournal={() => setJournalMode('note')}
+      onOpenBpPhoto={() => setJournalMode('bp-photo')}
       goTab={setTab}
     />,
     werte: <window.Werte
@@ -109,6 +112,13 @@ function App() {
       <window.QuickEntrySheet open={!!quickType} type={quickType} onClose={() => setQuickType(null)} />
       <window.SymptomSheet    open={symptomOpen}                onClose={() => setSymptomOpen(false)} />
       <window.LabSheet        open={!!labKey} labKey={labKey}    onClose={() => setLabKey(null)} />
+      {window.JournalSheet && (
+        <window.JournalSheet
+          open={!!journalMode}
+          mode={journalMode || 'note'}
+          onClose={() => setJournalMode(null)}
+        />
+      )}
 
       {quizOpen && (
         <window.Quiz onClose={() => setQuizOpen(false)} onComplete={() => setQuizOpen(false)} />

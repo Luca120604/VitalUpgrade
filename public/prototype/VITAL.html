@@ -1,26 +1,28 @@
-<!DOCTYPE html><html data-src-ver="81c7da05" lang="de" style="--accent: oklch(0.78 0.09 190); --accent-ink: oklch(0.22 0.04 190); --accent-dim: oklch(0.35 0.06 190 / 0.22);"><head>
-
-
+<!DOCTYPE html>
+<html lang="de" style="--accent: oklch(0.78 0.09 190); --accent-ink: oklch(0.22 0.04 190); --accent-dim: oklch(0.35 0.06 190 / 0.22);">
+<head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0c">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>VITAL</title>
-  <template id="__bundler_thumbnail">
-    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" data-om-id="81c7da05:5" data-src-loc="207:269:662">
-      <rect width="100" height="100" fill="#0a0a0c" data-src-loc="276:323"></rect>
-      <circle cx="50" cy="50" r="26" fill="none" stroke="oklch(0.78 0.09 190)" stroke-width="3" data-src-loc="330:421"></circle>
-      <circle cx="50" cy="50" r="14" fill="oklch(0.78 0.09 190 / 0.18)" data-src-loc="428:495"></circle>
-      <path d="M24 50h8l4-9 6 18 4-12 4 6h16" fill="none" stroke="oklch(0.78 0.09 190)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-src-loc="502:651"></path>
-    </svg>
-  </template>
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
   <style>
-    body { margin: 0; background: #0a0a0c; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    html, body { margin: 0; background: #0a0a0c; min-height: 100vh; min-height: 100dvh; }
+    body {
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; box-sizing: border-box;
+    }
     #root { position: relative; }
+
+    /* Desktop / wide-screen: show as iPhone mockup */
     .device {
       width: 390px; height: 844px;
       background: var(--bg-0); color: var(--text-0);
-      border-radius: 48px;
-      overflow: hidden; position: relative;
+      border-radius: 48px; overflow: hidden; position: relative;
       box-shadow: 0 0 0 10px #1d1d20, 0 0 0 11px #26262a,
                   0 40px 90px rgba(0,0,0,0.6), 0 10px 30px rgba(0,0,0,0.4);
     }
@@ -34,39 +36,53 @@
       padding: 18px 28px 0; pointer-events: none;
       font-family: -apple-system, system-ui; font-size: 15px; font-weight: 600; color: var(--text-0);
     }
+
+    /* Mobile / narrow: full-screen app, no fake iPhone chrome */
+    @media (max-width: 500px) {
+      body { padding: 0; }
+      #root { width: 100%; height: 100dvh; }
+      .device {
+        width: 100vw; height: 100dvh;
+        border-radius: 0; box-shadow: none;
+      }
+      .device::after { display: none; }
+      .status-bar { display: none; }
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
   <!-- Base layers -->
-  <script type="text/babel" src="icons.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="icons.jsx"></script>
-  <script type="text/babel" src="icons-extra.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="icons-extra.jsx"></script>
-  <script type="text/babel" src="lib/storage.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="lib/storage.jsx"></script>
-  <script type="text/babel" src="lib/storage-compat.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="lib/storage-compat.jsx"></script>
-  <script type="text/babel" src="lib/parsing.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="lib/parsing.jsx"></script>
-  <script type="text/babel" src="data.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="data.jsx"></script>
-  <script type="text/babel" src="data-extra.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="data-extra.jsx"></script>
-  <script type="text/babel" src="lib/rules.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="lib/rules.jsx"></script>
-  <script type="text/babel" src="ui.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="ui.jsx"></script>
-  <script type="text/babel" src="tweaks-panel.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="icons.jsx" data-plugins="transform-react-jsx-source" data-filename="icons.jsx"></script>
+  <script type="text/babel" src="icons-extra.jsx" data-plugins="transform-react-jsx-source" data-filename="icons-extra.jsx"></script>
+  <script type="text/babel" src="lib/storage.jsx" data-plugins="transform-react-jsx-source" data-filename="lib/storage.jsx"></script>
+  <script type="text/babel" src="lib/storage-compat.jsx" data-plugins="transform-react-jsx-source" data-filename="lib/storage-compat.jsx"></script>
+  <script type="text/babel" src="lib/parsing.jsx" data-plugins="transform-react-jsx-source" data-filename="lib/parsing.jsx"></script>
+  <script type="text/babel" src="data.jsx" data-plugins="transform-react-jsx-source" data-filename="data.jsx"></script>
+  <script type="text/babel" src="data-extra.jsx" data-plugins="transform-react-jsx-source" data-filename="data-extra.jsx"></script>
+  <script type="text/babel" src="lib/rules.jsx" data-plugins="transform-react-jsx-source" data-filename="lib/rules.jsx"></script>
+  <script type="text/babel" src="ui.jsx" data-plugins="transform-react-jsx-source" data-filename="ui.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx" data-plugins="transform-react-jsx-source" data-filename="tweaks-panel.jsx"></script>
 
   <!-- Screens -->
-  <script type="text/babel" src="screens/home.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="screens/home.jsx"></script>
-  <script type="text/babel" src="screens/werte.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="screens/werte.jsx"></script>
-  <script type="text/babel" src="screens/wissen.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="screens/wissen.jsx"></script>
-  <script type="text/babel" src="screens/einstellungen.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="screens/einstellungen.jsx"></script>
-  <script type="text/babel" src="screens/sheets.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="screens/sheets.jsx"></script>
-  <script type="text/babel" src="screens/quiz.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="screens/quiz.jsx"></script>
-  <script type="text/babel" src="screens/action-onboarding.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="screens/action-onboarding.jsx"></script>
-  <script type="text/babel" src="fab-coach.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="fab-coach.jsx"></script>
+  <script type="text/babel" src="screens/home.jsx" data-plugins="transform-react-jsx-source" data-filename="screens/home.jsx"></script>
+  <script type="text/babel" src="screens/werte.jsx" data-plugins="transform-react-jsx-source" data-filename="screens/werte.jsx"></script>
+  <script type="text/babel" src="screens/wissen.jsx" data-plugins="transform-react-jsx-source" data-filename="screens/wissen.jsx"></script>
+  <script type="text/babel" src="screens/einstellungen.jsx" data-plugins="transform-react-jsx-source" data-filename="screens/einstellungen.jsx"></script>
+  <script type="text/babel" src="screens/sheets.jsx" data-plugins="transform-react-jsx-source" data-filename="screens/sheets.jsx"></script>
+  <script type="text/babel" src="screens/quiz.jsx" data-plugins="transform-react-jsx-source" data-filename="screens/quiz.jsx"></script>
+  <script type="text/babel" src="screens/action-onboarding.jsx" data-plugins="transform-react-jsx-source" data-filename="screens/action-onboarding.jsx"></script>
+  <script type="text/babel" src="screens/journal.jsx" data-plugins="transform-react-jsx-source" data-filename="screens/journal.jsx"></script>
+  <script type="text/babel" src="fab-coach.jsx" data-plugins="transform-react-jsx-source" data-filename="fab-coach.jsx"></script>
 
   <!-- App -->
-  <script type="text/babel" src="app.jsx" data-plugins="transform-react-jsx-source,om-src-id" data-filename="app.jsx"></script>
+  <script type="text/babel" src="app.jsx" data-plugins="transform-react-jsx-source" data-filename="app.jsx"></script>
 
-  <script type="text/babel" data-plugins="transform-react-jsx-source,om-src-id" data-filename="inline-18">
+  <script type="text/babel" data-plugins="transform-react-jsx-source" data-filename="inline-shell">
     function Shell() {
       return (
         <div className="device">
@@ -81,7 +97,6 @@
         </div>
       );
     }
-    // Wait until all Babel-transpiled modules have attached to window.
     function waitForDeps(cb, attempts = 0) {
       if (window.App && window.Home && window.Werte && window.Wissen && window.Einstellungen
           && window.Onboarding && window.ActionSheet && window.QuickEntrySheet
@@ -91,9 +106,7 @@
       } else if (attempts < 120) {
         setTimeout(() => waitForDeps(cb, attempts + 1), 40);
       } else {
-        console.error('[vital] deps missing', {
-          App: !!window.App, Home: !!window.Home, UI: !!window.UI,
-        });
+        console.error('[vital] deps missing', { App: !!window.App, Home: !!window.Home, UI: !!window.UI });
       }
     }
     const root = ReactDOM.createRoot(document.getElementById('root'));
